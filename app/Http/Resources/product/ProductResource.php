@@ -16,10 +16,21 @@ class ProductResource extends Resource
     {
         return [
             'name' => $this->name,
-            'description' => $this->detail,
+            'description' => $this->details,
             'price' => $this->price,
-            'stock' => $this->stock,
-            'discount' => $this->discount
+            'stock' => $this->stock == 0 ? 'Stock is empty!' : $this->stock,
+            'discount' => $this->discount,
+            'totalPrice' => round((1- ($this->discount/100)) * $this->price, 2),
+
+            'rating' => $this->reviews->count()>0
+                ? // if
+                round($this->reviews->sum('star')/ $this->reviews->count())
+                : // else
+                'No rating yet!',
+
+            'href' =>[
+                'reviews' => route('reviews.index', $this->id)
+            ]
         ];
     }
 }
